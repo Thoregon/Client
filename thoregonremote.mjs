@@ -38,6 +38,8 @@ if (window.neulandconfig?.conn === 'duplex') {
         const sahost = saurl.host;
         const saprotocol = saurl.protocol === 'https:' ? 'wss' : 'ws';
         agenturls.sa = `${saprotocol}://${sahost}/${endpoint}`;
+    } else if (universe.account.domain) {
+        agenturls.sa = `https://${universe.account.domain}/${endpoint}`;
     }
 
     if (universe.NEXUS_REST) {
@@ -45,6 +47,8 @@ if (window.neulandconfig?.conn === 'duplex') {
         const nexushost = nexusurl.host;
         const nexusprotocol = nexusurl.protocol === 'https:' ? 'wss' : 'ws';
         agenturls.nexus = `${nexusprotocol}://${nexushost}/${endpoint}`;
+    } else if (universe.nexus) {
+        agenturls.sa = `${universe.nexus}/${endpoint}`;
     }
 
     universe.$connector = WSConnector.use(agenturls);
