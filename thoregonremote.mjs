@@ -48,7 +48,7 @@ if (window.neulandconfig?.conn === 'duplex') {
         const nexusprotocol = nexusurl.protocol === 'https:' ? 'wss' : 'ws';
         agenturls.nexus = `${nexusprotocol}://${nexushost}/${endpoint}`;
     } else if (universe.nexus) {
-        agenturls.sa = `${universe.nexus}/${endpoint}`;
+        agenturls.nexus = `${universe.nexus}/${endpoint}`;
     }
 
     universe.$connector = WSConnector.use(agenturls);

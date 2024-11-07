@@ -5,7 +5,7 @@
 const SYS_MODULES = ['thoregonB'];
 
 const APP_MODULES = {
-    'easypay-application-dashboard'   : ["upaymehome", "upaymemodules", "upayme-ui-dashboard", "upayme-style-customer"],
+    'easypay-application-dashboard'   : ["upaymehome", "upaymemodules", "upayme-ui-dashboard", "upayme-style-customer", "upayme-style-nexus"],
     'easypay-application-checkout'    : ["upaymehome", "upaymemodules", "upayme-ui-checkout", "upayme-style-customer"],
     'upayme-application-affiliate'    : ["upaymenexushome", "upayme-style-nexus", "upaymenexusapi", "upaymemodules", "upayme-ui-affiliate"],
     'upayme-application-accountportal': ["upaymenexushome", "upayme-style-nexus", "upaymenexusapi", "upaymemodules", "upayme-ui-accountportal"],
