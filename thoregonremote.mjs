@@ -38,7 +38,7 @@ if (window.neulandconfig?.conn === 'duplex') {
         const sahost = saurl.host;
         const saprotocol = saurl.protocol === 'https:' ? 'wss' : 'ws';
         agenturls.sa = `${saprotocol}://${sahost}/${endpoint}`;
-    } else if (universe.account.domain) {
+    } else if (universe.account?.domain) {
         agenturls.sa = `https://${universe.account.domain}/${endpoint}`;
     }
 
