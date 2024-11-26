@@ -337,7 +337,7 @@ const buildHatch = (tag, url) => {
                     if (devhost) {
                         widgetdef = widgetdef.replace('{host}', devhost);
                     } else {
-                        widgetdef = widgetdef.replace('{host}', window.location.hostname);
+                        widgetdef = widgetdef.replace('{host}', window.location.origin);    // window.location.protocol+'//'+window.location.hostname
                     }
                 }
                 const HatchClass = buildHatch(tag, widgetdef);
