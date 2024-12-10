@@ -315,14 +315,20 @@ const buildHatch = (tag, url) => {
 
 (async () => {
     // debugger;
-    let devhost;
+    let vendorhost = 'http://localhost:9996/';
+/*
     try {
         const res = await fetch('/etc/localdev.txt');
-        if (res.ok) devhost = await res.text();
+        if (res.ok) vendorhost = await res.text();
     } catch (ignore) {
         // console.error(ignore);
     }
+*/
     try {
+        if (!vendorhost) {
+            const url = new URL(import.meta.url);
+            vendorhost = url.origin;
+        }
         // const dev = (await import('./etc/universe.dev.mjs')).default;
         const widgetdefs = (await import('./widgets.mjs')).default;
         if (!widgetdefs) return;
@@ -334,8 +340,8 @@ const buildHatch = (tag, url) => {
             if (widgetdefs[tag]) {
                 let widgetdef = widgetdefs[tag];
                 if (widgetdef.indexOf('{host}') != -1) {
-                    if (devhost) {
-                        widgetdef = widgetdef.replace('{host}', devhost);
+                    if (vendorhost) {
+                        widgetdef = widgetdef.replace('{host}', vendorhost);
                     } else {
                         widgetdef = widgetdef.replace('{host}', window.location.origin);    // window.location.protocol+'//'+window.location.hostname
                     }
