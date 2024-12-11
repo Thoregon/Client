@@ -405,8 +405,14 @@ export default class ProtoUniverse {
             // check for a service worker update
             // the updated service worker automatically become active (skipWaiting) and claims all clients
             // no extra 'claim' message necessary like after first install
-            registration.onupdatefound = (evt) => { /*console.log(">> ServiceWorker UPDATE", evt)*/ };
-            await registration.update();
+/*
+            registration.onupdatefound = (evt) => { /!*console.log(">> ServiceWorker UPDATE", evt)*!/ };
+            try {
+                await registration.update();
+            } catch (ignore) {
+                console.log("Current ServiceWorker is used, no update"/!*, ignore*!/);
+            }
+*/
 
             wasinstalled = true;
             serviceWorker.addEventListener("message", async (event) => await this.serviceworkerMessage(event) );
