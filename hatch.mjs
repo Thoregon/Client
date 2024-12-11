@@ -315,15 +315,14 @@ const buildHatch = (tag, url) => {
 
 (async () => {
     // debugger;
-    let vendorhost = 'http://localhost:9996/';
-/*
+    let vendorhost; //= 'http://localhost:9996/';
     try {
         const res = await fetch('/etc/localdev.txt');
         if (res.ok) vendorhost = await res.text();
     } catch (ignore) {
         // console.error(ignore);
     }
-*/
+
     try {
         if (!vendorhost) {
             const url = new URL(import.meta.url);
