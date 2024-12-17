@@ -308,7 +308,7 @@ export default class ProtoUniverse {
         thoregon.checkpoint("§§ protouniverse inflate");
         try {
             // install service worker with the IPFS peer
-            await this.installServiceWorker();
+            await this.checkServiceWorker();
         } catch (e) {
             // todo: handle error properly
             console.log('%% Service worker registration failed:', e);
@@ -393,47 +393,71 @@ export default class ProtoUniverse {
         });
     }
 
-    async installServiceWorker(opts) {
+    async checkServiceWorker(opts) {
         const serviceWorker = navigator.serviceWorker;
         // todo [OPEN]: check if browser supports service workers -> hint to user 'use modern browser'
-        let wasinstalled = false;
 
         if (serviceWorker.controller) {
-            // console.log("%% service worker already loaded exists");
-            registration = await serviceWorker.ready; // serviceWorker.controller;
-
-            // check for a service worker update
-            // the updated service worker automatically become active (skipWaiting) and claims all clients
-            // no extra 'claim' message necessary like after first install
-            // registration.onupdatefound = (evt) => { /!*console.log(">> ServiceWorker UPDATE", evt)*!/ };
-            try {
-                await registration.update();
-            } catch (ignore) {
-                console.log("Current ServiceWorker is used, no update");
+            const scriptUrl = serviceWorker.controller.scriptURL;
+            if (!scriptUrl.endsWith("upaymepulssw.js")) {
+                await this.removeServiceWorker();
+                await doAsync();
+                return await this.installServiceWorker(serviceWorker, opts);
+            } else {
+                return await this.updateServiceWorker(serviceWorker, opts);
             }
-
-            wasinstalled = true;
-            serviceWorker.addEventListener("message", async (event) => await this.serviceworkerMessage(event) );
         } else {
-            // todo [REFACTOR]: check the support status for workers as module -> https://stackoverflow.com/questions/44118600/web-workers-how-to-import-modules
-            /* support feature detection
-                  try {
-                    registration = await serviceWorker.register('upaymepulssw.js', { type: 'module' });
-                  } catch(error) {
-                    registration = await serviceWorker.register('upaymepulssw.js');
-                  }
-             */
-            await serviceWorker.register('./upaymepulssw.js', /*{ scope: '/', type: "module" }*/);
-            registration = await serviceWorker.ready;
+            return await this.installServiceWorker(serviceWorker, opts);
+        }
+    }
+
+    async installServiceWorker(serviceWorker, opts) {
+        // todo [REFACTOR]: check the support status for workers as module -> https://stackoverflow.com/questions/44118600/web-workers-how-to-import-modules
+        /* support feature detection
+              try {
+                registration = await serviceWorker.register('upaymepulssw.js', { type: 'module' });
+              } catch(error) {
+                registration = await serviceWorker.register('upaymepulssw.js');
+              }
+         */
+        await serviceWorker.register('./upaymepulssw.js', /*{ scope: '/', type: "module" }*/);
+        registration = await serviceWorker.ready;
+
+        serviceWorker.addEventListener("message", async (event) => await this.serviceworkerMessage(event) );
+        // now wait to activate the service worker and let it claim its clients. this prevents a page reload
+        // this is the case when a hard reload (with or w/o clear cache) happens
+        // the first install does 'skipWaiting' and claims all clients
+        await this.serviceWorkerRequest({ cmd: 'claim' });
+        return false;
+    }
+
+    async updateServiceWorker(serviceWorker, opts) {
+        // console.log("%% service worker already loaded exists");
+        registration = await serviceWorker.ready; // serviceWorker.controller;
+
+        // check for a service worker update
+        // the updated service worker automatically become active (skipWaiting) and claims all clients
+        // no extra 'claim' message necessary like after first install
+        // registration.onupdatefound = (evt) => { /!*console.log(">> ServiceWorker UPDATE", evt)*!/ };
+        try {
+            await registration.update();
 
             serviceWorker.addEventListener("message", async (event) => await this.serviceworkerMessage(event) );
-            // now wait to activate the service worker and let it claim its clients. this prevents a page reload
-            // this is the case when a hard reload (with or w/o clear cache) happens
-            // the first install does 'skipWaiting' and claims all clients
-            await this.serviceWorkerRequest({ cmd: 'claim' });
+            return true;
+        } catch (ignore) {
+            console.log("Current ServiceWorker is not update");
+            await this.removeServiceWorker();
+            return await this.installServiceWorker(opts);
         }
+    }
 
-        return wasinstalled;
+    async removeServiceWorker() {
+        // there was another service worker registered, remove all previous
+        console.log("§§ protouniverse: removing previous service worker registrations");
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (const registration of registrations) {
+            try { registration.unregister() } catch (ignore) {}
+        }
     }
 
     async serviceworkerMessage(event) {

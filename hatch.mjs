@@ -315,7 +315,7 @@ const buildHatch = (tag, url) => {
 
 (async () => {
     // debugger;
-    let vendorhost = 'http://localhost:9996/';
+    let vendorhost ;  // = 'http://localhost:9996/';
     try {
         const res = await fetch('/etc/localdev.txt');
         if (res.ok) vendorhost = await res.text();
