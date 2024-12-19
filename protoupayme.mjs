@@ -491,6 +491,7 @@ export default class ProtoUniverse {
                 if (timeout > 0) {
                     // only the first request for the same command needs a timeout
                     watchdog = setTimeout(() => {
+                        (async () => { window.location.reload() })();
                         let handlers = this._requestQ[msg.cmd];
                         delete this._requestQ[msg.cmd];
                         if (handlers) handlers.forEach(({ reject }) => {
