@@ -262,7 +262,7 @@ if (globalThis.crypto) {
 
 // can be changed by setting: thoregon.swtimeout = n
 // if thoregon.swtimeout <= 0 not timeout is used
-const SERVICEWORKERREQUESTTIMEOUT = 15000;
+const SERVICEWORKERREQUESTTIMEOUT = 5000;
 
 //
 //
@@ -325,7 +325,9 @@ export default class ProtoUniverse {
         } else {
             await puls.dev({ isDev: false });
         }
+        console.log("++ PROTO b4 puls.open");
         await puls.open();
+        console.log("++ PROTO aft puls.open");
         // add repositories
         // await maintainRepositories(puls);
         const app = whichApp();
@@ -462,7 +464,7 @@ export default class ProtoUniverse {
 
     async serviceworkerMessage(event) {
         let data = event.data;
-
+        console.log(`<< puls.${data.cmd} RESULT`);
         // find handlers for the request
         let handlers = this._requestQ[data.cmd];
         if (!handlers) return;
@@ -482,6 +484,7 @@ export default class ProtoUniverse {
      */
     /*async*/ serviceWorkerRequest(msg) {
         return new Promise(((resolve, reject) => {
+            console.log(`>> puls.${msg.cmd}`);
             let handlers = this._requestQ[msg.cmd];
             let watchdog;
             if (!handlers) {
@@ -501,7 +504,10 @@ export default class ProtoUniverse {
                 }
             }
             handlers.push({ resolve, reject, watchdog });
-            registration.active.postMessage(msg);
+            try { registration.active.postMessage(msg) } catch (e) {
+                console.error("-- Can't invoke puls", e);
+                reject(e);
+            }
         }));
     }
 

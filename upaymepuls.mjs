@@ -389,17 +389,24 @@ class Puls {
     // maintain a repository list. priority top down. the first definition of a module counts
     //
     async clientOpened() {
+        console.log("++ PULS clientOpened");
         await puls._devloader?.clientOpened();
+        console.log("++ PULS clientOpened devloader OK");
         if (puls._cachingloaders) for await (const loader of puls._cachingloaders) { await loader.clientOpened() }
+        console.log("++ PULS clientOpened caching loaders OK");
         if (puls._noncachingloaders) for await (const loader of puls._noncachingloaders) { await loader.clientOpened() }
+        console.log("++ PULS clientOpened noncaching loaders OK");
     }
-
 
     async withApp(app) {
         if (!app) return;
+        console.log("++ PULS withApp", app);
         await puls._devloader?.withApp(app);
+        console.log("++ PULS withApp devloader OK");
         if (puls._cachingloaders) for await (const loader of puls._cachingloaders) { await loader.withApp(app) }
+        console.log("++ PULS withApp caching loaders OK");
         if (puls._noncachingloaders) for await (const loader of puls._noncachingloaders) { await loader.withApp(app) }
+        console.log("++ PULS withApp noncaching loaders OK");
     }
 
     async maintainRepolist(settings) {

@@ -67,6 +67,7 @@ self.addEventListener('message', (event) => {
         messageSource.postMessage({ cmd: 'claim', "ack": true });
     }
 
+    console.log("++ PULSSW onmessage", event?.data?.cmd);
     puls.handleMessage(event);
 });
 
