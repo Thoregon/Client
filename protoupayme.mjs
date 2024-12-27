@@ -178,20 +178,16 @@ function appRestarted() {
     clearTimeout(updateTimer);
 }
 
-function wait4update() {
-    updateTimer = setTimeout(async () => {
-        puls.clearCaches('THOREGON');
-        puls.clearCaches('NEULAND');
-        await timeout(1000);
-        window.location.reload();
-    }, CACHEUPDATETIMEOUT);
-}
-
 async function clearCacheAndUpdate() {
-    await puls.clearCaches('THOREGON');
-    await puls.clearCaches('NEULAND');
+    await puls.clear();
+    // await puls.clear('THOREGON');
+    // await puls.clear('NEULAND');
     await timeout(1000);
     window.location.reload();
+}
+
+function wait4update() {
+    updateTimer = setTimeout(clearCacheAndUpdate, CACHEUPDATETIMEOUT);
 }
 
 //-------------------------------------------------------------
@@ -391,7 +387,7 @@ export default class ProtoUniverse {
         window.puls   = universe.puls;
 
         // todo [OPEN]: now seal global objects and local DBs from direct access from app code
-
+        appRestarted();
         // todo [REFACTOR]: cleanup 'prod' and 'dev' mode, introduce plugin
         if (!(universe.DEV?.ssi)) await dorifer.restartApp();
     }

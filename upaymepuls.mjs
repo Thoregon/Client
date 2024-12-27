@@ -112,12 +112,12 @@ class Puls {
 
     async clearCache(cachename) {
         for await (const loader of this._cachingloaders) {
-            await loader.clearCache(cachename);
+            if (loader.clearCache) await loader.clearCache(cachename);
         }
     }
 
     async clearAllCaches() {
-        await this.clearCache();
+        // await this.clearCache();
         for await (const name of await caches.keys()) {
             await caches.delete(name);
         }
@@ -323,7 +323,8 @@ class Puls {
                 this.reset();
                 break;
             case 'clearCache':
-                await this.clearCache(data.cache);
+                await this.clearAllCaches();
+                // await this.clearCache(data.cache);
                 messageSource.postMessage({ cmd, "ack": true });
                 break;
             // case 'refreshThoregonCache':
