@@ -262,7 +262,7 @@ if (globalThis.crypto) {
 
 // can be changed by setting: thoregon.swtimeout = n
 // if thoregon.swtimeout <= 0 not timeout is used
-const SERVICEWORKERREQUESTTIMEOUT = 5000;
+const SERVICEWORKERREQUESTTIMEOUT = 11000;
 
 //
 //
