@@ -9,13 +9,10 @@
 import account                from "/etc/account.mjs";
 import AffiliateActionManager from "/upayme-module-affiliate-action-manager/affiliateactionmanager.mjs"
 
-globalThis.universe = { account }
-
 const restService = {
     async record(eventlog) {
         try {
-            const service = universe.SA_REST ?? '';
-            // todo [**REMOTE**]
+            const service = account?.nexus ?? '';
             const res = await fetch(service + '/xactivity/record?p=' + encodeURIComponent(JSON.stringify(eventlog)));
             console.log(">> Activity.record");
             return res.ok;
@@ -34,9 +31,10 @@ async function handleActivity() {
     const urlParams = new URLSearchParams(url.search);
 
     const params = {
-        productid: urlParams.get('productid'),
+        productid:   urlParams.get('productid'),
         affiliateid: urlParams.get('affiliateid'),
         campaignkey: urlParams.get('campaignkey'),
+        accountname: urlParams.get('accountname'),
     }
 
     const targetURL = urlParams.get('target');
@@ -46,7 +44,8 @@ async function handleActivity() {
     const affData = {
         productid  : params.productid,
         affiliate  : params.affiliateid.trim().toLowerCase(),
-        campaignkey: params.campaignkey
+        campaignkey: params.campaignkey,
+        accountname: params.accountname,
     }
 
     // todo [OPEN]: check existing (reggistered) affiliates
@@ -55,6 +54,7 @@ async function handleActivity() {
     await affiliateManager.recordClick(affData);
 
     console.log(">> handleActivity 4");
+
     setTimeout(() => window.top.location.href = targetURL, 300);
 }
 
