@@ -171,6 +171,29 @@ async function source(specifier) {
     return source;
 }
 
+const CACHEUPDATETIMEOUT = 12000;
+let updateTimer;
+function appRestarted() {
+    if (!updateTimer) return;
+    clearTimeout(updateTimer);
+}
+
+function wait4update() {
+    updateTimer = setTimeout(async () => {
+        puls.clearCaches('THOREGON');
+        puls.clearCaches('NEULAND');
+        await timeout(1000);
+        window.location.reload();
+    }, CACHEUPDATETIMEOUT);
+}
+
+async function clearCacheAndUpdate() {
+    await puls.clearCaches('THOREGON');
+    await puls.clearCaches('NEULAND');
+    await timeout(1000);
+    window.location.reload();
+}
+
 //-------------------------------------------------------------
 
 
@@ -200,6 +223,7 @@ Object.defineProperties(thoregon, {
     'checkpoint'       : { value: (msg) => console.log(msg, Date.now() - thoregon.birth), configurable: false, enumerable: true, writable: false },
     'activateFirewalls': { value: async () => await protouniverse?.activateFirewalls(), configurable: false, enumerable : true, writable: false },
     'source'           : { value: source, configurable: false, enumerable: false, writable: false },
+    'appRestarted'     : { value: appRestarted, configurable: false, enumerable: false, writable: false },
     'loadTestData'     : { value: true, configurable: false, enumerable: true, writable: false },
     'webRTC'           : { value: window.self === window.top, configurable: false, enumerable: true, writable: false }, // in iframes, webRTC is not available due to security (why?)
     'appname'          : { value: whichApp(), configurable: false, enumerable: true, writable: false },
@@ -560,8 +584,14 @@ export default class ProtoUniverse {
 
 (async () => {
     // console.log('** PULS inflate universe');
-    protouniverse = new ProtoUniverse();
-    await protouniverse.inflate();
-    // new Spike().doit();
-    // console.log('** PULS beats');
+    try {
+        protouniverse = new ProtoUniverse();
+        await protouniverse.inflate();
+        // new Spike().doit();
+        // console.log('** PULS beats');
+    } catch (e) {
+        const updatelink = document.getElementById("updateapp");
+        updatelink.addEventListener("click", clearCacheAndUpdate);
+        updatelink.style.display = 'block';
+    }
 })();
