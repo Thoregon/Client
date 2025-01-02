@@ -199,6 +199,8 @@ function wait4update() {
  */
 const thoregon = {};
 
+const { app, hash } = whichApp();
+
 // *** some test methods
 Object.defineProperties(thoregon, {
     'ui'               : { value: true, configurable: false, enumerable: true, writable: false },
@@ -222,7 +224,8 @@ Object.defineProperties(thoregon, {
     'appRestarted'     : { value: appRestarted, configurable: false, enumerable: false, writable: false },
     'loadTestData'     : { value: true, configurable: false, enumerable: true, writable: false },
     'webRTC'           : { value: window.self === window.top, configurable: false, enumerable: true, writable: false }, // in iframes, webRTC is not available due to security (why?)
-    'appname'          : { value: whichApp(), configurable: false, enumerable: true, writable: false },
+    'appname'          : { value: app, configurable: false, enumerable: true, writable: false },
+    'apphash'          : { value: hash, configurable: false, enumerable: true, writable: false },
 });
 
 /*
@@ -308,7 +311,7 @@ function whichApp() {
         const hash = window.location.hash;
         if (!hash || hash.length < 3) return null;
         const app = hash.substring(1).split('/')[0];
-        return app;
+        return { app, hash };
     } catch (e) {
         return null;
     }
@@ -350,7 +353,7 @@ export default class ProtoUniverse {
         console.log("++ PROTO aft puls.open");
         // add repositories
         // await maintainRepositories(puls);
-        const app = whichApp();
+        const app = thoregon.appname;
         if (app) {
             const start = Date.now();
             console.log("§§ protouniverse: request load app dependencies");
