@@ -590,6 +590,7 @@ export default class ProtoUniverse {
         // console.log('** PULS beats');
     } catch (e) {
         const updatelink = document.getElementById("updateapp");
+        if (!updatelink) return;
         updatelink.addEventListener("click", clearCacheAndUpdate);
         updatelink.style.display = 'block';
     }
