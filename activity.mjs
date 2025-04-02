@@ -40,7 +40,7 @@ async function handleActivity() {
     const targetURL = urlParams.get('target');
 
     console.log(">> handleActivity 2");
-    const affiliateManager = AffiliateActionManager.withService(restService);
+    const affiliateManager = await AffiliateActionManager.withService(restService);
     const affData = {
         productid  : params.productid,
         affiliate  : params.affiliateid.trim().toLowerCase(),
