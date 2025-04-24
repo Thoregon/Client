@@ -54,7 +54,7 @@ async function handleActivity() {
     await affiliateManager.recordClick(affData);
 
     console.log(">> handleActivity 4");
-
+// debugger;
     setTimeout(() => window.top.location.href = targetURL, 300);
 }
 
